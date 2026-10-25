@@ -14,7 +14,7 @@ from dataclasses import dataclass
 import chess
 import numpy as np
 
-from .mcts import Evaluator, MCTSConfig, SearchTree, run_search, select_move
+from .mcts import Evaluator, MCTSConfig, SearchTree, game_outcome, run_search, select_move
 from .model import NetworkEvaluator, load_checkpoint, pick_device
 
 
@@ -87,14 +87,14 @@ def play_match(
     for g in range(games):
         a_is_white = g % 2 == 0
         board = chess.Board()
-        while board.outcome(claim_draw=True) is None and board.ply() < max_plies:
+        while game_outcome(board) is None and board.ply() < max_plies:
             if board.ply() < random_opening_plies:
                 move = RandomPlayer().choose_move(board, rng)
             else:
                 mover = player_a if (board.turn == chess.WHITE) == a_is_white else player_b
                 move = mover.choose_move(board, rng)
             board.push(move)
-        outcome = board.outcome(claim_draw=True)
+        outcome = game_outcome(board)
         if outcome is None or outcome.winner is None:
             result.draws += 1
         elif (outcome.winner == chess.WHITE) == a_is_white:

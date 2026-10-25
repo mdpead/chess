@@ -47,9 +47,26 @@ class Node:
         return self.value_sum / self.visit_count if self.visit_count else 0.0
 
 
+def game_outcome(board: chess.Board) -> chess.Outcome | None:
+    """Like `board.outcome(claim_draw=True)`, but much cheaper.
+
+    python-chess's claim_draw also checks whether any legal move would allow a
+    threefold claim, which dominated self-play time. Here a game is drawn by
+    repetition only once the current position has occurred three times.
+    """
+    outcome = board.outcome(claim_draw=False)
+    if outcome is not None:
+        return outcome
+    if board.halfmove_clock >= 100:
+        return chess.Outcome(chess.Termination.FIFTY_MOVES, None)
+    if board.is_repetition(3):
+        return chess.Outcome(chess.Termination.THREEFOLD_REPETITION, None)
+    return None
+
+
 def terminal_value(board: chess.Board) -> float | None:
     """Value for the side to move if the game is over, else None."""
-    outcome = board.outcome(claim_draw=True)
+    outcome = game_outcome(board)
     if outcome is None:
         return None
     if outcome.winner is None:

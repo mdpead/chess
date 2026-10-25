@@ -9,7 +9,7 @@ import chess
 import numpy as np
 
 from .encoding import encode_board, move_to_index
-from .mcts import Evaluator, MCTSConfig, SearchTree, run_search, select_move
+from .mcts import Evaluator, MCTSConfig, SearchTree, game_outcome, run_search, select_move
 
 
 @dataclass
@@ -43,7 +43,7 @@ class _ActiveGame:
 
 
 def _game_result(board: chess.Board, max_plies: int) -> tuple[float, str] | None:
-    outcome = board.outcome(claim_draw=True)
+    outcome = game_outcome(board)
     if outcome is not None:
         result = 0.0 if outcome.winner is None else (1.0 if outcome.winner == chess.WHITE else -1.0)
         return result, outcome.termination.name.lower()

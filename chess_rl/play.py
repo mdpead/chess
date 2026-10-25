@@ -11,7 +11,7 @@ import argparse
 import chess
 import numpy as np
 
-from .mcts import MCTSConfig
+from .mcts import MCTSConfig, game_outcome
 from .evaluate import MCTSPlayer
 from .model import NetworkEvaluator, load_checkpoint, pick_device
 
@@ -31,7 +31,7 @@ def main(argv: list[str] | None = None) -> None:
     board = chess.Board()
     rng = np.random.default_rng()
 
-    while board.outcome(claim_draw=True) is None:
+    while game_outcome(board) is None:
         print(board.unicode(invert_color=True, borders=True, orientation=human), "\n")
         if board.turn == human:
             text = input("Your move (SAN or UCI, 'quit' to exit): ").strip()
@@ -53,7 +53,7 @@ def main(argv: list[str] | None = None) -> None:
         board.push(move)
 
     print(board.unicode(invert_color=True, borders=True, orientation=human))
-    print("Game over:", board.outcome(claim_draw=True).result())
+    print("Game over:", game_outcome(board).result())
 
 
 if __name__ == "__main__":
