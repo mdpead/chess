@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chess-rl"
+version = "0.1.0"
+description = "AlphaZero-style reinforcement learning for chess (self-play + MCTS + ResNet)"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "chess>=1.10",
+    "numpy>=1.24",
+    "torch>=2.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[project.scripts]
+chess-rl-train = "chess_rl.train:main"
+chess-rl-eval = "chess_rl.evaluate:main"
+chess-rl-play = "chess_rl.play:main"
+chess-rl-uci = "chess_rl.uci:main"
+
+[tool.setuptools.packages.find]
+include = ["chess_rl*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
